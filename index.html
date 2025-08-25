@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blinking Sentence</title>
+  <style>
+    :root{
+      --bg:#0f1221; --card:#141935; --accent:#7dd3fc; --accent2:#a78bfa; --text:#eaf0ff; --muted:#9aa3b2;
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; display:grid; place-items:center; background:
+        radial-gradient(1200px 600px at 85% -10%, #22306a 0%, transparent 60%),
+        var(--bg);
+      font-family:system-ui,Segoe UI,Roboto,Inter,Arial,sans-serif; color:var(--text); padding:22px;
+    }
+    .app{
+      width:min(780px, 95vw); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08); border-radius:var(--radius); box-shadow:0 22px 60px rgba(0,0,0,.45); overflow:hidden;
+    }
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 18px;
+      background:linear-gradient(180deg, rgba(125,211,252,.12), rgba(167,139,250,.08));
+      border-bottom:1px solid rgba(255,255,255,.08)
+    }
+    .title{display:flex; align-items:center; gap:12px; font-weight:800}
+    .logo{
+      width:38px; height:38px; border-radius:12px; display:grid; place-items:center; color:#0f1221; font-weight:900;
+      background: conic-gradient(from 120deg, var(--accent), var(--accent2), var(--accent));
+      box-shadow:0 10px 18px rgba(125,211,252,.25)
+    }
+    .controls{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      appearance:none; border:none; cursor:pointer; padding:10px 14px; border-radius:12px;
+      background:#1a2147; color:var(--text); font-weight:700; border:1px solid rgba(255,255,255,.1);
+      transition:transform .08s ease, filter .2s ease
+    }
+    .btn:hover{filter:brightness(1.1)}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{background:linear-gradient(180deg, #60a5fa, #3b82f6)}
+    .btn.warn{background:linear-gradient(180deg, #fb7185, #ef4444)}
+    .panel{padding:18px}
+    .grid{display:grid; grid-template-columns:1fr; gap:12px}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:640px){ .row{grid-template-columns:1fr} }
+    .field{
+      background:#111735; border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:12px 12px 10px;
+    }
+    .field label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px; font-weight:700; letter-spacing:.4px}
+    .field input[type="text"]{
+      width:100%; background:transparent; border:none; outline:none; color:var(--text); font-size:16px; font-weight:700;
+    }
+    .field input[type="range"]{width:100%}
+    .preview{
+      margin-top:8px; display:grid; place-items:center; min-height:160px; text-align:center;
+      background:var(--card); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:16px
+    }
+    .sentence{
+      font-size:40px; font-weight:900; letter-spacing:.4px; line-height:1.15; word-break:break-word
+    }
+    .hint{color:var(--muted); font-size:12px; text-align:center; margin-top:8px}
+    footer{padding:12px; text-align:center; color:var(--muted); border-top:1px solid rgba(255,255,255,.06); font-size:12px}
+  </style>
+</head>
+<body>
+  <main class="app" role="application" aria-label="Blinking Sentence app">
+    <header>
+      <div class="title">
+        <div class="logo">B</div>
+        <div>
+          <div style="font-size:16px">Blinking Sentence</div>
+          <div style="font-size:12px; color:var(--muted)">Type text, set speed & style, then blink ✨</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button id="startBtn" class="btn primary" title="Start (Space)">Start</button>
+        <button id="stopBtn" class="btn warn" title="Stop (Space)">Stop</button>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="grid">
+        <div class="field">
+          <label for="textInput">Sentence</label>
+          <input id="textInput" type="text" placeholder="Type your sentence here…" value="Hello, keep blinking!" />
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="speed">Blink speed (ms) <span id="speedVal" aria-live="polite">500</span></label>
+            <input id="speed" type="range" min="100" max="2000" step="50" value="500" />
+          </div>
+
+          <div class="field">
+            <label for="color">Text color</label>
+            <input id="color" type="color" value="#ffffff" style="width:100%; height:38px; border:none; background:transparent; padding:0; cursor:pointer" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="size">Font size (px) <span id="sizeVal" aria-live="polite">40</span></label>
+            <input id="size" type="range" min="16" max="96" step="2" value="40" />
+          </div>
+
+          <div class="field">
+            <label for="bg">Background glow</label>
+            <input id="bg" type="range" min="0" max="60" step="2" value="18" />
+          </div>
+        </div>
+
+        <div class="preview" aria-live="polite">
+          <div id="sentence" class="sentence">Hello, keep blinking!</div>
+        </div>
+        <div class="hint">Tip: Press <b>Space</b> to toggle Start/Stop · <b>Enter</b> to focus sentence</div>
+      </div>
+    </section>
+
+    <footer>Single-file app · No dependencies · Works on GitHub Pages</footer>
+  </main>
+
+  <script>
+    // Elements
+    const sentenceEl = document.getElementById('sentence');
+    const textInput  = document.getElementById('textInput');
+    const speedInput = document.getElementById('speed');
+    const sizeInput  = document.getElementById('size');
+    const colorInput = document.getElementById('color');
+    const bgInput    = document.getElementById('bg');
+    const speedVal   = document.getElementById('speedVal');
+    const sizeVal    = document.getElementById('sizeVal');
+    const startBtn   = document.getElementById('startBtn');
+    const stopBtn    = document.getElementById('stopBtn');
+
+    // State
+    let timer = null;
+    let visible = true;
+
+    function applyStyle(){
+      sentenceEl.style.color = colorInput.value || '#ffffff';
+      sentenceEl.style.fontSize = (sizeInput.value || 40) + 'px';
+      document.body.style.background =
+        `radial-gradient(${1200 + Number(bgInput.value)*10}px ${600 + Number(bgInput.value)*5}px at 85% -10%, #22306a 0%, transparent 60%), #0f1221`;
+    }
+
+    function updateText(){
+      sentenceEl.textContent = textInput.value || ' ';
+    }
+
+    function setSpeedLabel(){
+      speedVal.textContent = speedInput.value;
+      sizeVal.textContent  = sizeInput.value;
+    }
+
+    function startBlink(){
+      stopBlink(); // clear any old
+      const interval = Math.max(50, Number(speedInput.value) || 500);
+      timer = setInterval(()=>{
+        visible = !visible;
+        sentenceEl.style.visibility = visible ? 'visible' : 'hidden';
+      }, interval);
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+    }
+
+    function stopBlink(){
+      if(timer){ clearInterval(timer); timer = null; }
+      sentenceEl.style.visibility = 'visible';
+      visible = true;
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+    }
+
+    // Wire inputs
+    textInput.addEventListener('input', updateText);
+    colorInput.addEventListener('input', applyStyle);
+    sizeInput.addEventListener('input', ()=>{ setSpeedLabel(); applyStyle(); });
+    bgInput.addEventListener('input', applyStyle);
+    speedInput.addEventListener('input', setSpeedLabel);
+
+    startBtn.addEventListener('click', startBlink);
+    stopBtn.addEventListener('click', stopBlink);
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e)=>{
+      if(e.code === 'Space'){ e.preventDefault(); (timer ? stopBlink() : startBlink()); }
+      if(e.key === 'Enter'){ sentenceEl.scrollIntoView({behavior:'smooth', block:'center'}); }
+    });
+
+    // Init
+    setSpeedLabel();
+    applyStyle();
+    updateText();
+    stopBlink(); // start with controls enabled
+  </script>
+</body>
+</html>
